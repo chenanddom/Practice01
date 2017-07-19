@@ -19,13 +19,19 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
     private List<String> mDatas;
     private Context mContext;
     private LayoutInflater inflater;
-
+    private OnItemClickListener mOnItemClickListener;
     public MyRecyclerAdapter(Context mContext,List<String> mDatas) {
         this.mContext = mContext;
         this.mDatas = mDatas;
         this.inflater = LayoutInflater.from(mContext);
     }
-
+    public interface OnItemClickListener{
+        void onClick(int position);
+        void onLongClick(int position);
+    }
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener ){
+        this.mOnItemClickListener=onItemClickListener;
+    }
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         View view = inflater.inflate(R.layout. item_home,parent, false);  ;
@@ -34,8 +40,27 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder myViewHolder, int i) {
+    public void onBindViewHolder(MyViewHolder myViewHolder, final int i) {
         myViewHolder.textView.setText(mDatas.get(i));
+        if(mOnItemClickListener!=null){
+            myViewHolder.textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnItemClickListener.onClick(i);
+                }
+            });
+            myViewHolder.textView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    mOnItemClickListener.onLongClick(i);
+
+                    return false;
+                }
+            });
+        }
+
+
+
     }
 
     @Override
